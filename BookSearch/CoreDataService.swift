@@ -36,5 +36,26 @@ class CoreDataService {
         return fetchBookEntity(withId: id) != nil
     }
     
+    func saveBookAsFavorite(_ book: Book) {
+        let context = persistentContainer.viewContext
+        // Avoid duplicates
+        if isBookFavorite(withId: book.id) { return }
+        
+        let bookEntity = BookEntity(context: context)
+        bookEntity.id = book.id
+        bookEntity.title = book.title
+        bookEntity.authors = book.authors as NSArray? // Transformable attribute
+        bookEntity.publishers = book.publishers as NSArray?
+        if let coverId = book.coverId {
+            bookEntity.coverId = Int64(coverId)
+        } // Optional Int64
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save favorite book: \(error)")
+        }
+    }
+    
     
 }
