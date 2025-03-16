@@ -69,4 +69,24 @@ class CoreDataService {
         }
     }
     
+    func fetchFavoriteBooks() -> [Book] {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
+        do {
+            let bookEntities = try context.fetch(fetchRequest)
+            return bookEntities.map { entity in
+                Book(
+                    id: entity.id ?? "",
+                    title: entity.title ?? "",
+                    authors: entity.authors as? [String],
+                    publishers: entity.publishers as? [String],
+                    coverId: Int(entity.coverId)
+                )
+            }
+        } catch {
+            print("Failed to fetch favorite books: \(error)")
+            return []
+        }
+    }
+    
 }
