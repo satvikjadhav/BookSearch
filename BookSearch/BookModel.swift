@@ -29,3 +29,48 @@ struct Book: Codable, Identifiable {
         case coverId = "cover_i"
     }
 }
+
+struct BookRow: View {
+    let book: Book
+    let isFavorite: Bool
+    let toggleFavorite: () -> Void
+
+    var body: some View {
+        HStack {
+            // Cover image or placeholder
+            if let url = book.coverImageURL {
+                AsyncImage(url: url) { image in
+                    image.resizable()
+                } placeholder: {
+                    Image(systemName: "book")
+                }
+                .frame(width: 50, height: 50)
+            } else {
+                Image(systemName: "book")
+                    .frame(width: 50, height: 50)
+            }
+            
+            // Book details
+            VStack(alignment: .leading) {
+                Text(book.title)
+                    .font(.headline)
+                if let authors = book.authors, !authors.isEmpty {
+                    Text("Authors: \(authors.joined(separator: ", "))")
+                        .font(.subheadline)
+                }
+                if let publishers = book.publishers, !publishers.isEmpty {
+                    Text("Publishers: \(publishers.joined(separator: ", "))")
+                        .font(.subheadline)
+                }
+            }
+            
+            Spacer()
+            
+            // Favorite toggle button
+            Button(action: toggleFavorite) {
+                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    .foregroundColor(isFavorite ? .red : .gray)
+            }
+        }
+    }
+}
