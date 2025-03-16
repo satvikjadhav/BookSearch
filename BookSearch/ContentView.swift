@@ -8,6 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    let coreDataService = CoreDataService()
+    @StateObject var searchViewModel: SearchViewModel
+    @StateObject var favoritesViewModel: FavoritesViewModel
+
+    init() {
+        let service = coreDataService
+        _searchViewModel = StateObject(wrappedValue: SearchViewModel(coreDataService: service))
+        _favoritesViewModel = StateObject(wrappedValue: FavoritesViewModel(coreDataService: service))
+    }
+
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -15,7 +25,6 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world!")
         }
-        .padding()
     }
 }
 
