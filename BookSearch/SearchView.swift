@@ -8,11 +8,34 @@
 import SwiftUI
 
 struct SearchView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+    @ObservedObject var viewModel: SearchViewModel
 
-#Preview {
-    SearchView()
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(viewModel.books) { book in
+                    BookRow(
+                        book: book,
+                        isFavorite: viewModel.isFavorite(book: book),
+                        toggleFavorite: { viewModel.toggleFavorite(for: book) }
+                    )
+                }
+            }
+            .navigationTitle("Search Books")
+            .searchable(text: $viewModel.query, prompt: "Search for books")
+            .onSubmit(of: .search) {
+                Task { await viewModel.search() }
+            }
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView("Searching...")
+                }
+            }
+            .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
+                Button("OK") { viewModel.errorMessage = nil }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
+        }
+    }
 }
