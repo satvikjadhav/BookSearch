@@ -19,11 +19,15 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            SearchView(viewModel: searchViewModel)
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
+            FavoritesView(viewModel: favoritesViewModel)
+                .tabItem {
+                    Label("Favorites", systemImage: "heart")
+                }
         }
     }
 }
