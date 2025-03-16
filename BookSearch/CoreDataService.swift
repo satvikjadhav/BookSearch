@@ -57,5 +57,16 @@ class CoreDataService {
         }
     }
     
+    func removeFavoriteBook(withId id: String) {
+        let context = persistentContainer.viewContext
+        if let bookEntity = fetchBookEntity(withId: id) {
+            context.delete(bookEntity)
+            do {
+                try context.save()
+            } catch {
+                print("Failed to remove favorite book: \(error)")
+            }
+        }
+    }
     
 }
