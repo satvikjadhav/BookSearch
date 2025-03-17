@@ -52,6 +52,7 @@ class CoreDataService {
         
         do {
             try context.save()
+            NotificationCenter.default.post(name: .didUpdateFavorites, object: nil)
         } catch {
             print("Failed to save favorite book: \(error)")
         }
@@ -63,6 +64,7 @@ class CoreDataService {
             context.delete(bookEntity)
             do {
                 try context.save()
+                NotificationCenter.default.post(name: .didUpdateFavorites, object: nil)
             } catch {
                 print("Failed to remove favorite book: \(error)")
             }
@@ -89,4 +91,9 @@ class CoreDataService {
         }
     }
     
+}
+
+// Define a custom notification name
+extension Notification.Name {
+    static let didUpdateFavorites = Notification.Name("didUpdateFavorites")
 }
