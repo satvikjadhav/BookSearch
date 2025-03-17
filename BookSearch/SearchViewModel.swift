@@ -19,6 +19,14 @@ class SearchViewModel: ObservableObject {
 
     init(coreDataService: CoreDataService) {
         self.coreDataService = coreDataService
+        // Listen for favorite updates
+        NotificationCenter.default.addObserver(
+            forName: .didUpdateFavorites,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.objectWillChange.send() // Trigger UI refresh
+        }
     }
 
     func search() async {
@@ -46,5 +54,10 @@ class SearchViewModel: ObservableObject {
         } else {
             coreDataService.saveBookAsFavorite(book)
         }
+        objectWillChange.send() // Manually trigger UI update
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
