@@ -16,6 +16,16 @@ class FavoritesViewModel: ObservableObject {
     init(coreDataService: CoreDataService) {
         self.coreDataService = coreDataService
         fetchFavorites()
+        // Listen for favorite updates
+        NotificationCenter.default.addObserver(
+            forName: .didUpdateFavorites,
+            object: nil,
+            queue: .main  // This already helps but isn't enough
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.fetchFavorites()
+            }
+        }
     }
 
     func fetchFavorites() {
@@ -24,6 +34,10 @@ class FavoritesViewModel: ObservableObject {
 
     func removeFavorite(book: Book) {
         coreDataService.removeFavoriteBook(withId: book.id)
-        fetchFavorites()
+        fetchFavorites() // Already triggers notification, but keep for clarity
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
